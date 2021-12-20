@@ -46,11 +46,21 @@ function handleMove(request, response) {
         right: true,
         up: true
     }
+    me.hazard = {
+        left: false,
+        down: false,
+        right: false,
+        up: false
+    }
+    
+    console.log(me.safeMoves);
 
     me.safeMoves = moveLogic.dontHitNeck(gameData, me.safeMoves);
     me.safeMoves = moveLogic.dontHitWalls(gameData, me.safeMoves);
     me.safeMoves = moveLogic.dontHitOwnBody(gameData, me.safeMoves);
     me.safeMoves = moveLogic.dontHitOtherSnakes(gameData, me.safeMoves);
+    me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.safeMoves);
+    me.safeMoves = moveLogic.siftHazardMovesIfPossible(me.safeMoves, me.hazard);
 
     let closestFood = moveLogic.findCloseFood(gameData, me.safeMoves);
 

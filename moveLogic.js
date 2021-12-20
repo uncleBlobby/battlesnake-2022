@@ -85,6 +85,42 @@ function dontHitOtherSnakes(gameData, safeMoves){
     return safeMoves;
 }
 
+function beAwareOfHazardSauce(gameData){
+    const myHead = gameData.you.head;
+    const hazards = gameData.board.hazards;
+    
+    //hazards are the same data shape as snakes, an array of objects
+    //each hazard has one x and one y
+
+    for(let i = 0; i < hazards.length; i++){
+        if((myHead.x - 1 == hazards[i].x) && (myHead.y == hazards[i].y)){
+            hazards.left = true;
+        }
+        if((myHead.x + 1 == hazards[i].x) && (myHead.y == hazards[i].y)){
+            hazards.right = true;
+        }
+        if((myHead.x == hazards[i].x) && (myHead.y - 1 == hazards[i].y)){
+            hazards.down = true;
+        }
+        if((myHead.x == hazards[i].x) && (myHead.y + 1 == hazards[i].y)){
+            hazards.up = true;
+        }
+    }
+
+    return hazards;
+}
+
+function siftHazardMovesIfPossible(safeMoves, hazards){
+    for( const direction in hazards ){
+        if(hazards[direction]){
+            let index = direction;
+            safeMoves.index = false;
+        }
+    }
+
+    return safeMoves;
+}
+
 function findCloseFood(gameData, safeMoves){
     const food = gameData.board.food;
     // loop over each food object in the food array, and add a property for distance to my head
@@ -167,6 +203,8 @@ module.exports = {
     dontHitWalls: dontHitWalls,
     dontHitOwnBody: dontHitOwnBody,
     dontHitOtherSnakes: dontHitOtherSnakes,
+    beAwareOfHazardSauce: beAwareOfHazardSauce,
+    siftHazardMovesIfPossible: siftHazardMovesIfPossible,
     findCloseFood: findCloseFood,
     moveTowardCloseFoodIfSafe: moveTowardCloseFoodIfSafe,
     chooseMove: chooseMove,
