@@ -40,6 +40,25 @@ function handleMove(request, response) {
     let gameData = request.body;
     let me = gameData.you;
 
+    me.directions = {
+        left : {
+            safe: true,
+            hazard: false
+        },
+        right : {
+            safe:true,
+            hazard: false
+        },
+        down : {
+            safe:true,
+            hazard: false
+        },
+        up : {
+            safe:true,
+            hazard: false
+        },
+    }
+
     me.safeMoves = {
         left: true,
         down: true,
@@ -53,22 +72,22 @@ function handleMove(request, response) {
         up: false
     }
     
-    console.log(me.safeMoves);
+    console.log(me.directions);
 
-    me.safeMoves = moveLogic.dontHitNeck(gameData, me.safeMoves);
-    me.safeMoves = moveLogic.dontHitWalls(gameData, me.safeMoves);
-    me.safeMoves = moveLogic.dontHitOwnBody(gameData, me.safeMoves);
-    me.safeMoves = moveLogic.dontHitOtherSnakes(gameData, me.safeMoves);
-    me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.safeMoves);
-    me.safeMoves = moveLogic.siftHazardMovesIfPossible(me.safeMoves, me.hazard);
+    me.directions = moveLogic.dontHitNeck(gameData, me.directions);
+    me.directions = moveLogic.dontHitWalls(gameData, me.directions);
+    me.directions = moveLogic.dontHitOwnBody(gameData, me.directions);
+    me.directions = moveLogic.dontHitOtherSnakes(gameData, me.directions);
+    me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.directions);
+    me.directions = moveLogic.siftHazardMovesIfPossible(me.directions, me.hazard);
 
-    let closestFood = moveLogic.findCloseFood(gameData, me.safeMoves);
+    let closestFood = moveLogic.findCloseFood(gameData, me.directions);
 
     //me.chosenMove = moveLogic.chooseMove(me.safeMoves);
-    me.chosenMove = moveLogic.moveTowardCloseFoodIfSafe(gameData, closestFood, me.safeMoves);
+    me.chosenMove = moveLogic.moveTowardCloseFoodIfSafe(gameData, closestFood, me.directions);
     // logs all your snake info right before chosing move -- useful for debug
     console.log(gameData.you.head);
-    console.log(gameData.you.safeMoves);
+    console.log(gameData.you.directions);
     // logs location of all food
     //console.log(gameData.board.food);
     

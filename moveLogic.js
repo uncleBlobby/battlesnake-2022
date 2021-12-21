@@ -1,91 +1,160 @@
-function dontHitNeck(gameData, safeMoves){
+function checkIfSafe(move, directions){
+    switch(move){
+        case "left":
+            return directions.left.safe;
+        case "right":
+            return directions.right.safe;
+        case "down":
+            return directions.down.safe;
+        case "up":
+            return directions.up.safe;
+    };
+};
+
+function checkIfHazard(move, directions){
+    switch(move){
+        case "left":
+            return directions.left.hazard;
+        case "right":
+            return directions.right.hazard;
+        case "down":
+            return directions.down.hazard;
+        case "up":
+            return directions.up.hazard;
+    };
+}
+
+function safeArray(directions){
+    let arr = [];
+    if(checkIfSafe("left", directions)) { arr.push("left"); }
+    if(checkIfSafe("right", directions)) { arr.push("right"); }
+    if(checkIfSafe("down", directions)) { arr.push("down"); }
+    if(checkIfSafe("up", directions)) { arr.push("up"); }
+    return arr;
+};
+
+function hazardsArray(directions){
+    let arr = [];
+    if(checkIfHazard("left", directions)) { arr.push("left"); }
+    if(checkIfHazard("right", directions)) { arr.push("right"); }
+    if(checkIfHazard("down", directions)) { arr.push("down"); }
+    if(checkIfHazard("up", directions)) { arr.push("up"); }
+    return arr;
+}
+
+function dontHitNeck(gameData, directions){
+    if((!gameData) || (!directions)) {
+        console.error(`ERROR: missing gameData or directions object`);
+        return false;
+    };
+
     const myHead = gameData.you.head;
     const myNeck = gameData.you.body[1];
 
     if (myNeck.x < myHead.x) {
-        safeMoves.left = false;
-    }
+        directions.left.safe = false;
+    };
     if (myNeck.x > myHead.x) {
-        safeMoves.right = false;
-    }
+        directions.right.safe = false;
+    };
     if (myNeck.y < myHead.y) {
-        safeMoves.down = false;
-    }
+        directions.down.safe = false;
+    };
     if (myNeck.y > myHead.y) {
-        safeMoves.up = false;
-    }
+        directions.up.safe = false;
+    };
 
-    return safeMoves;
-}
+    return directions;
+};
 
-function dontHitWalls(gameData, safeMoves){
+function dontHitWalls(gameData, directions){
+    if((!gameData) || (!directions)) {
+        console.error(`ERROR: missing gameData or directions object`);
+        return false;
+    };
+    
     const myHead = gameData.you.head;
     const width = gameData.board.width;
     const height = gameData.board.height;
 
     if (myHead.x == 0){
-        safeMoves.left = false;
-    }
+        directions.left.safe = false;
+    };
     if (myHead.x == width - 1){
-        safeMoves.right = false;
-    }
+        directions.right.safe = false;
+    };
     if (myHead.y == 0){
-        safeMoves.down = false;
-    }
+        directions.down.safe = false;
+    };
     if (myHead.y == height - 1){
-        safeMoves.up = false;
-    }
+        directions.up.safe = false;
+    };
 
-    return safeMoves;
-}
+    return directions;
+};
 
-function dontHitOwnBody(gameData, safeMoves){
+function dontHitOwnBody(gameData, directions){
+    if((!gameData) || (!directions)) {
+        console.error(`ERROR: missing gameData or directions object`);
+        return false;
+    };
+
     const myHead = gameData.you.head;
     const myBody = gameData.you.body;
 
     for(let i = 0; i < myBody.length; i++){
         if((myHead.x - 1 == myBody[i].x) && (myHead.y == myBody[i].y)){
-            safeMoves.left = false;
-        }
+            directions.left.safe = false;
+        };
         if((myHead.x + 1 == myBody[i].x) && (myHead.y == myBody[i].y)){
-            safeMoves.right = false;
-        }
+            directions.right.safe = false;
+        };
         if((myHead.y - 1 == myBody[i].y) && (myHead.x == myBody[i].x)){
-            safeMoves.down = false;
-        }
+            directions.down.safe = false;
+        };
         if((myHead.y + 1 == myBody[i].y) && (myHead.x == myBody[i].x)){
-            safeMoves.up = false;
-        }
-    }
+            directions.up.safe = false;
+        };
+    };
 
-    return safeMoves;
-}
+    return directions;
+};
 
-function dontHitOtherSnakes(gameData, safeMoves){
+function dontHitOtherSnakes(gameData, directions){
+    if((!gameData) || (!directions)) {
+        console.error(`ERROR: missing gameData or directions object`);
+        return false;
+    };
+
     const myHead = gameData.you.head;
     const snakes = gameData.board.snakes;
 
     for(let i = 0; i < snakes.length; i++){
         for(let j = 0; j < snakes[i].length; j++){
             if((myHead.x - 1 == snakes[i].body[j].x) && (myHead.y == snakes[i].body[j].y)){
-                safeMoves.left = false;
-            }
+                directions.left.safe = false;
+            };
             if((myHead.x + 1 == snakes[i].body[j].x) && (myHead.y == snakes[i].body[j].y)){
-                safeMoves.right = false;
-            }
+                directions.right.safe = false;
+            };
             if((myHead.y - 1 == snakes[i].body[j].y) && (myHead.x == snakes[i].body[j].x)){
-                safeMoves.down = false;
+                directions.down.safe = false;
             }
             if((myHead.y + 1 == snakes[i].body[j].y) && (myHead.x == snakes[i].body[j].x)){
-                safeMoves.up = false;
-            }
-        }
-    }
+                directions.up.safe = false;
+            };
+        };
+    };
 
-    return safeMoves;
-}
+    return directions;
+};
 
-function beAwareOfHazardSauce(gameData){
+function beAwareOfHazardSauce(gameData, directions){
+    if((!gameData) || (!directions)) {
+        console.error(`ERROR: missing gameData or directions object`);
+        return false;
+    };
+
     const myHead = gameData.you.head;
     const hazards = gameData.board.hazards;
     
@@ -94,22 +163,23 @@ function beAwareOfHazardSauce(gameData){
 
     for(let i = 0; i < hazards.length; i++){
         if((myHead.x - 1 == hazards[i].x) && (myHead.y == hazards[i].y)){
-            hazards.left = true;
-        }
+            directions.left.hazard = true;
+        };
         if((myHead.x + 1 == hazards[i].x) && (myHead.y == hazards[i].y)){
-            hazards.right = true;
-        }
+            directions.right.hazard = true;
+        };
         if((myHead.x == hazards[i].x) && (myHead.y - 1 == hazards[i].y)){
-            hazards.down = true;
-        }
+            directions.down.hazard = true;
+        };
         if((myHead.x == hazards[i].x) && (myHead.y + 1 == hazards[i].y)){
-            hazards.up = true;
-        }
-    }
+            directions.up.hazard = true;
+        };
+    };
 
-    return hazards;
-}
+    return directions;
+};
 
+// TODO: rewrite this, doesn't work at all
 function siftHazardMovesIfPossible(safeMoves, hazards){
     for( const direction in hazards ){
         if(hazards[direction]){
@@ -121,7 +191,7 @@ function siftHazardMovesIfPossible(safeMoves, hazards){
     return safeMoves;
 }
 
-function findCloseFood(gameData, safeMoves){
+function findCloseFood(gameData){
     const food = gameData.board.food;
     // loop over each food object in the food array, and add a property for distance to my head
     for(let i = 0; i < food.length; i++){
@@ -143,25 +213,25 @@ function findCloseFood(gameData, safeMoves){
     return closestFood;
 }
 
-function moveTowardCloseFoodIfSafe(gameData, closestFood, safeMoves){
+function moveTowardCloseFoodIfSafe(gameData, closestFood, directions){
     const myHead = gameData.you.head;
     if(!closestFood){
-        return chooseMove(safeMoves);
+        return chooseMove(directions);
     }
-    if((closestFood.x < myHead.x) && (safeMoves.left == true)){
+    if((closestFood.x < myHead.x) && (checkIfSafe("left", directions))){
         return "left";
     }
-    if((closestFood.x > myHead.x) && (safeMoves.right == true)){
+    if((closestFood.x > myHead.x) && (checkIfSafe("right", directions))){
         return "right";
     }
-    if((closestFood.y < myHead.y) && (safeMoves.down == true)){
+    if((closestFood.y < myHead.y) && (checkIfSafe("down", directions))){
         return "down";
     }
-    if((closestFood.y > myHead.y) && (safeMoves.up == true)){
+    if((closestFood.y > myHead.y) && (checkIfSafe("up", directions))){
         return "up";
     }
     else {
-        return chooseMove(safeMoves);
+        return chooseMove(directions);
     }
 }
 
@@ -172,24 +242,40 @@ function findDistanceToCoord(myHead, targetX, targetY){
     return totalDistance;
 }
 
+function removeHazardsFromSafe(hazArr, safArr){
+    for(let i = 0; i < hazArr.length; i++){
+        for(let j = 0; j < safArr.length; j++){
+            if(hazArr[i] == safArr[j]){
+                safArr.splice(j, 1);
+            };
+        };
+    };
+    return safArr;
+};
 
-function chooseMove(safeMoves){
-    console.log(`safeMoves: ${JSON.stringify(safeMoves)}`);
+function chooseMove(directions){
+    console.log(`safeMoves: ${JSON.stringify(directions)}`);
     //make array of safe moves from safemoves object
-    let arrayMoves = [];
-    for(const dir in safeMoves){
-        
-        //console.log(`${dir}: ${safeMoves[dir]}`)
-        if(safeMoves[dir])
-        {
-            arrayMoves.push(dir);
-        }
+    let arraySafeMoves = safeArray(directions);
+    let arrayHazardMoves = hazardsArray(directions);
+    console.log(`removing hazards from safe moves`);
+    if(arraySafeMoves.length > arrayHazardMoves.length){
+        arraySafeMoves = removeHazardsFromSafe(arrayHazardMoves, arraySafeMoves);
     }
+    
     console.log(`choosing random move`);
-    console.log(arrayMoves);
-    let randomChoice = returnRandomArrayIndex(arrayMoves);
-    console.log(`randomChoice: ${randomChoice}`);
-    return arrayMoves[randomChoice];
+    console.log(arraySafeMoves);
+    if(arraySafeMoves.length != 0){
+        let randomChoice = returnRandomArrayIndex(arraySafeMoves);
+        console.log(`randomChoice: ${randomChoice}`);
+        return arraySafeMoves[randomChoice];
+    }
+    if((arraySafeMoves.length == 0) && (arrayHazardMoves.length != 0)){
+        let randomChoice = returnRandomArrayIndex(arrayHazardMoves);
+        console.log(`randomChoice [hazardMove]: ${randomChoice}`);
+        return arrayHazardMoves[randomChoice];
+    }
+
 }
 
 function returnRandomArrayIndex(array){
