@@ -22,7 +22,49 @@ function checkIfHazard(move, directions){
         case "up":
             return directions.up.hazard;
     };
-}
+};
+
+function findNextCoord(move, head){
+    let pos;
+    switch (move){
+        case "left":
+            pos.x = head.x - 1;
+            pos.y = head.y;
+            break;
+        case "right":
+            pos.x = head.x +1;
+            pos.y = head.y;
+            break;
+        case "down":
+            pos.x = head.x;
+            pos.y = head.y - 1;
+            break;
+        case "up":
+            pos.x = head.x;
+            pos.y = head.y + 1;
+            break;
+    };
+    return pos;
+};
+
+function findEnemyHeadsandLengths(gameData){
+    // loop through enemies on board, find location of heads ( and length? )
+    const snakes = gameData.board.snakes;
+    let enemies = [];
+    for(let i = 0; i < snakes.length; i++){
+        if(snakes[i].name != gameData.you.name){
+            enemies.push(snakes[i]);
+        };
+    };
+    for(let i = 0; i < enemies.length; i++){
+        enemies[i].head = enemies[i].body[0];
+        enemies[i].length = enemies[i].body.length;
+    };
+
+    //console.log(enemies);
+
+    return enemies;
+};
 
 function safeArray(directions){
     let arr = [];
@@ -179,24 +221,12 @@ function beAwareOfHazardSauce(gameData, directions){
     return directions;
 };
 
-// TODO: rewrite this, doesn't work at all
-function siftHazardMovesIfPossible(safeMoves, hazards){
-    for( const direction in hazards ){
-        if(hazards[direction]){
-            let index = direction;
-            safeMoves.index = false;
-        }
-    }
-
-    return safeMoves;
-}
-
 function findCloseFood(gameData){
     const food = gameData.board.food;
     // loop over each food object in the food array, and add a property for distance to my head
     for(let i = 0; i < food.length; i++){
         food[i].distance = findDistanceToCoord(gameData.you.head, food[i].x, food[i].y);
-    }
+    };
 
     //console.log(food);
     // loop over each food object in the food array and return the one with the lowest distance
@@ -206,33 +236,33 @@ function findCloseFood(gameData){
         if(food[i].distance < closestFood.distance)
         {
             food[i] = closestFood;
-        }     
-    }
+        };     
+    };
 
     //console.log(closestFood);
     return closestFood;
-}
+};
 
 function moveTowardCloseFoodIfSafe(gameData, closestFood, directions){
     const myHead = gameData.you.head;
     if(!closestFood){
-        return chooseMove(directions);
-    }
+        return chooseMove(directions, gameData);
+    };
     if((closestFood.x < myHead.x) && (checkIfSafe("left", directions))){
         return "left";
-    }
+    };
     if((closestFood.x > myHead.x) && (checkIfSafe("right", directions))){
         return "right";
-    }
+    };
     if((closestFood.y < myHead.y) && (checkIfSafe("down", directions))){
         return "down";
-    }
+    };
     if((closestFood.y > myHead.y) && (checkIfSafe("up", directions))){
         return "up";
     }
     else {
-        return chooseMove(directions);
-    }
+        return chooseMove(directions, gameData);
+    };
 }
 
 function findDistanceToCoord(myHead, targetX, targetY){
@@ -253,7 +283,7 @@ function removeHazardsFromSafe(hazArr, safArr){
     return safArr;
 };
 
-function chooseMove(directions){
+function chooseMove(directions, gameData){
     console.log(`safeMoves: ${JSON.stringify(directions)}`);
     //make array of safe moves from safemoves object
     let arraySafeMoves = safeArray(directions);
@@ -290,9 +320,9 @@ module.exports = {
     dontHitOwnBody: dontHitOwnBody,
     dontHitOtherSnakes: dontHitOtherSnakes,
     beAwareOfHazardSauce: beAwareOfHazardSauce,
-    siftHazardMovesIfPossible: siftHazardMovesIfPossible,
     findCloseFood: findCloseFood,
     moveTowardCloseFoodIfSafe: moveTowardCloseFoodIfSafe,
     chooseMove: chooseMove,
-    returnRandomArrayIndex: returnRandomArrayIndex
+    returnRandomArrayIndex: returnRandomArrayIndex,
+    findEnemyHeadsandLengths: findEnemyHeadsandLengths
 }

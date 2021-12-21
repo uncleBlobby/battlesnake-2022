@@ -39,7 +39,7 @@ function handleStart(request, response) {
 function handleMove(request, response) {
     let gameData = request.body;
     let me = gameData.you;
-
+    let enemies = moveLogic.findEnemyHeadsandLengths(gameData);
     me.directions = {
         left : {
             safe: true,
@@ -66,15 +66,15 @@ function handleMove(request, response) {
     me.directions = moveLogic.dontHitOwnBody(gameData, me.directions);
     me.directions = moveLogic.dontHitOtherSnakes(gameData, me.directions);
     me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.directions);
-    //me.directions = moveLogic.siftHazardMovesIfPossible(me.directions, me.hazard);
+    
 
     let closestFood = moveLogic.findCloseFood(gameData, me.directions);
 
     //me.chosenMove = moveLogic.chooseMove(me.safeMoves);
     me.chosenMove = moveLogic.moveTowardCloseFoodIfSafe(gameData, closestFood, me.directions);
     // logs all your snake info right before chosing move -- useful for debug
-    console.log(gameData.you.head);
-    console.log(gameData.you.directions);
+    //console.log(gameData.you.head);
+    //console.log(gameData.you.directions);
     // logs location of all food
     //console.log(gameData.board.food);
     
