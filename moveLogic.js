@@ -261,7 +261,7 @@ function chooseMove(directions){
     console.log(`removing hazards from safe moves`);
     if(arraySafeMoves.length > arrayHazardMoves.length){
         arraySafeMoves = removeHazardsFromSafe(arrayHazardMoves, arraySafeMoves);
-    }
+    };
     
     console.log(`choosing random move`);
     console.log(arraySafeMoves);
@@ -269,12 +269,12 @@ function chooseMove(directions){
         let randomChoice = returnRandomArrayIndex(arraySafeMoves);
         console.log(`randomChoice: ${randomChoice}`);
         return arraySafeMoves[randomChoice];
-    }
+    };
     if((arraySafeMoves.length == 0) && (arrayHazardMoves.length != 0)){
         let randomChoice = returnRandomArrayIndex(arrayHazardMoves);
         console.log(`randomChoice [hazardMove]: ${randomChoice}`);
         return arrayHazardMoves[randomChoice];
-    }
+    };
 
 }
 

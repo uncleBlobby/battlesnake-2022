@@ -59,27 +59,14 @@ function handleMove(request, response) {
         },
     }
 
-    me.safeMoves = {
-        left: true,
-        down: true,
-        right: true,
-        up: true
-    }
-    me.hazard = {
-        left: false,
-        down: false,
-        right: false,
-        up: false
-    }
-    
-    console.log(me.directions);
+    //console.log(me.directions);
 
     me.directions = moveLogic.dontHitNeck(gameData, me.directions);
     me.directions = moveLogic.dontHitWalls(gameData, me.directions);
     me.directions = moveLogic.dontHitOwnBody(gameData, me.directions);
     me.directions = moveLogic.dontHitOtherSnakes(gameData, me.directions);
     me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.directions);
-    me.directions = moveLogic.siftHazardMovesIfPossible(me.directions, me.hazard);
+    //me.directions = moveLogic.siftHazardMovesIfPossible(me.directions, me.hazard);
 
     let closestFood = moveLogic.findCloseFood(gameData, me.directions);
 
