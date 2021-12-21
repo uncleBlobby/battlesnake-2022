@@ -25,16 +25,31 @@ function checkIfHazard(move, directions){
 };
 
 function findNextCoord(move, head){
-    let pos;
+    let pos = {};
     switch (move){
+        case "lower-left":
+            pos.x = head.x - 1;
+            pos.y = head.y - 1;
+            break;
         case "left":
             pos.x = head.x - 1;
             pos.y = head.y;
             break;
+        case "upper-left":
+            pos.x = head.x - 1;
+            pos.y = head.y + 1;
+            break;
+        case "upper-right":
+            pos.x = head.x + 1;
+            pos.y = head.y + 1;
+            break;
         case "right":
-            pos.x = head.x +1;
+            pos.x = head.x + 1;
             pos.y = head.y;
             break;
+        case "lower-right":
+            pos.x = head.x + 1;
+            pos.y = head.y - 1;
         case "down":
             pos.x = head.x;
             pos.y = head.y - 1;
@@ -65,6 +80,49 @@ function findEnemyHeadsandLengths(gameData){
 
     return enemies;
 };
+
+// check through all possible move directions
+// if that move is 1 square away from a snakes head, avoid
+// (unless that snake is < length)
+
+function checkForEnemyHeads(enemiesArr, gameData, directions){
+    const myHead = gameData.you.head;
+
+    // loops through all enemies..
+    // checks if a condition equals their head position
+    // right now works the same as checking for their body
+    // -- actually want to know if it's one away from their head..
+    // -- ie. in their move range
+    // TODO: fix this to check for WHERE AN ENEMY MIGHT MOVE TO...
+    // NOT WHERE THEY ARE!
+
+    for(let i = 0; i < enemiesArr.length; i++){
+        if(findNextCoord("left", myHead) == findNextCoord("right", enemiesArr[i].head)){
+            directions.left.enemyHeadNear = true;
+        };
+        if(findNextCoord("right", myHead) == findNextCoord("left", enemiesArr[i].head)){
+            directions.right.enemyHeadNear = true;
+        };
+        if(findNextCoord("up", myHead) == findNextCoord("down", enemiesArr[i].head)){
+            directions.down.enemyHeadNear = true;
+        };
+        if(findNextCoord("down", myHead) == findNextCoord("up", enemiesArr[i].head)){
+            directions.up.enemyHeadNear = true;
+        };
+    };
+    return directions;
+};
+
+function avoidBiggerEnemies(enemies, gameData, directions){
+    let arr;
+    for(let i = 0; i < directions.length; i++){
+        for(let j = 0; j < enemies.length; j++){
+            if(enemies.j.length >= gameData.you.length){
+                arr.push(directions)
+            }
+        }
+    }
+}
 
 function safeArray(directions){
     let arr = [];
@@ -324,5 +382,6 @@ module.exports = {
     moveTowardCloseFoodIfSafe: moveTowardCloseFoodIfSafe,
     chooseMove: chooseMove,
     returnRandomArrayIndex: returnRandomArrayIndex,
-    findEnemyHeadsandLengths: findEnemyHeadsandLengths
+    findEnemyHeadsandLengths: findEnemyHeadsandLengths,
+    checkForEnemyHeads: checkForEnemyHeads
 }

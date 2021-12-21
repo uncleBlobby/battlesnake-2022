@@ -43,19 +43,23 @@ function handleMove(request, response) {
     me.directions = {
         left : {
             safe: true,
-            hazard: false
+            hazard: false,
+            enemyHeadNear: false,
         },
         right : {
             safe:true,
-            hazard: false
+            hazard: false,
+            enemyHeadNear: false,
         },
         down : {
             safe:true,
-            hazard: false
+            hazard: false,
+            enemyHeadNear: false,
         },
         up : {
             safe:true,
-            hazard: false
+            hazard: false,
+            enemyHeadNear: false,
         },
     }
 
@@ -65,8 +69,8 @@ function handleMove(request, response) {
     me.directions = moveLogic.dontHitWalls(gameData, me.directions);
     me.directions = moveLogic.dontHitOwnBody(gameData, me.directions);
     me.directions = moveLogic.dontHitOtherSnakes(gameData, me.directions);
-    me.hazards = moveLogic.beAwareOfHazardSauce(gameData, me.directions);
-    
+    me.directions = moveLogic.beAwareOfHazardSauce(gameData, me.directions);
+    me.directions = moveLogic.checkForEnemyHeads(enemies, gameData, me.directions);
 
     let closestFood = moveLogic.findCloseFood(gameData, me.directions);
 

@@ -14,3 +14,7 @@ battlesnake play -W 11 -H 11 --name anti-blobby --url http://127.0.0.1:3000 --na
 
 
 battlesnake play -W 11 -H 11 --name anti-blobby --url http://127.0.0.1:3000 --name blobSnake --url http://127.0.0.1:3001 -g royale -v
+
+## from testing folder
+runs 10 matches and prints all their results to results.txt
+./run100.sh > results.txt 2>&1
