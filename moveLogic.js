@@ -24,6 +24,19 @@ function checkIfHazard(move, directions){
     };
 };
 
+function checkIfEnemyHeadNear(move, directions){
+    switch(move){
+        case "left":
+            return directions.left.enemyHeadNear;
+        case "right":
+            return directions.right.enemyHeadNear;
+        case "down":
+            return directions.down.enemyHeadNear;
+        case "up":
+            return directions.up.enemyHeadNear;
+    };
+};
+
 function findNextCoord(move, head){
     let pos = {};
     switch (move){
@@ -90,24 +103,33 @@ function checkForEnemyHeads(enemiesArr, gameData, directions){
 
     // loops through all enemies..
     // checks if a condition equals their head position
-    // right now works the same as checking for their body
-    // -- actually want to know if it's one away from their head..
-    // -- ie. in their move range
-    // TODO: fix this to check for WHERE AN ENEMY MIGHT MOVE TO...
-    // NOT WHERE THEY ARE!
+    // checks each direction you may move, and checks whether that square MAY
+    // be occupied by an enemy next turn, and checks that enemy's length
 
     for(let i = 0; i < enemiesArr.length; i++){
-        if(findNextCoord("left", myHead) == findNextCoord("right", enemiesArr[i].head)){
+        if( (findNextCoord("left", myHead) == findNextCoord("right", enemiesArr[i].head)) ||
+            (findNextCoord("left", myHead) == findNextCoord("up", enemiesArr[i].head))    ||
+            (findNextCoord("left", myHead) == findNextCoord("down", enemiesArr[i].head))) {
             directions.left.enemyHeadNear = true;
+            directions.left.enemySize = enemiesArr[i].length;
         };
-        if(findNextCoord("right", myHead) == findNextCoord("left", enemiesArr[i].head)){
+        if( (findNextCoord("right", myHead) == findNextCoord("left", enemiesArr[i].head))  ||
+            (findNextCoord("right", myHead) == findNextCoord("up", enemiesArr[i].head))    ||
+            (findNextCoord("right", myHead) == findNextCoord("down", enemiesArr[i].head))) {
             directions.right.enemyHeadNear = true;
+            directions.right.enemySize = enemiesArr[i].length;
         };
-        if(findNextCoord("up", myHead) == findNextCoord("down", enemiesArr[i].head)){
+        if( (findNextCoord("down", myHead) == findNextCoord("left", enemiesArr[i].head))  ||
+            (findNextCoord("down", myHead) == findNextCoord("right", enemiesArr[i].head)) ||
+            (findNextCoord("down", myHead) == findNextCoord("up", enemiesArr[i].head)))   {
             directions.down.enemyHeadNear = true;
+            directions.down.enemySize = enemiesArr[i].length;
         };
-        if(findNextCoord("down", myHead) == findNextCoord("up", enemiesArr[i].head)){
+        if( (findNextCoord("up", myHead) == findNextCoord("left", enemiesArr[i].head))  ||
+            (findNextCoord("up", myHead) == findNextCoord("right", enemiesArr[i].head)) ||
+            (findNextCoord("up", myHead) == findNextCoord("down", enemiesArr[i].head)))   {
             directions.up.enemyHeadNear = true;
+            directions.up.enemySize = enemiesArr[i].length;
         };
     };
     return directions;
@@ -118,10 +140,12 @@ function avoidBiggerEnemies(enemies, gameData, directions){
     for(let i = 0; i < directions.length; i++){
         for(let j = 0; j < enemies.length; j++){
             if(enemies.j.length >= gameData.you.length){
-                arr.push(directions)
+                arr.push(directions[i])
             }
         }
     }
+
+    return arr;
 }
 
 function safeArray(directions){
@@ -140,7 +164,17 @@ function hazardsArray(directions){
     if(checkIfHazard("down", directions)) { arr.push("down"); }
     if(checkIfHazard("up", directions)) { arr.push("up"); }
     return arr;
-}
+};
+
+function enemyHeadNearArray(directions){
+    let arr = [];
+    if(checkIfEnemyHeadNear("left", directions)) { arr.push("left"); }
+    if(checkIfEnemyHeadNear("right", directions)) { arr.push("right"); }
+    if(checkIfEnemyHeadNear("down", directions)) { arr.push("down"); }
+    if(checkIfEnemyHeadNear("up", directions)) { arr.push("up"); }
+    return arr;
+};
+
 
 function dontHitNeck(gameData, directions){
     if((!gameData) || (!directions)) {
@@ -278,7 +312,42 @@ function beAwareOfHazardSauce(gameData, directions){
 
     return directions;
 };
+/* TODO: NEEDS REWRITE
+function dontBoxSelfIn(gameData, directions){
+    const myHead = gameData.you.head;
+    let radar = {};
+    
+    radar.leftPos = findNextCoord("left", myHead);
+    radar.leftPos.lookLeft = findNextCoord("left", radar.leftPos);
+    radar.leftPos.lookRight = findNextCoord("right", radar.leftPos);
+    radar.leftPos.lookDown = findNextCoord("down", radar.leftPos);
+    radar.leftPos.lookUp = findNextCoord("up", radar.leftPos);
+    radar.rightPos = findNextCoord("right", myHead);
+    radar.rightPos.lookLeft = findNextCoord("left", radar.rightPos);
+    radar.rightPos.lookRight = findNextCoord("right", radar.rightPos);
+    radar.rightPos.lookDown = findNextCoord("down", radar.rightPos);
+    radar.rightPos.lookUp = findNextCoord("up", radar.rightPos);
+    radar.downPos = findNextCoord("down", myHead);
+    radar.downPos.lookLeft = findNextCoord("left", radar.downPos);
+    radar.downPos.lookRight = findNextCoord("right", radar.downPos);
+    radar.downPos.lookDown = findNextCoord("down", radar.downPos);
+    radar.downPos.lookUp = findNextCoord("up", radar.downPos);
+    radar.upPos = findNextCoord("up", myHead);
+    radar.upPos.lookLeft = findNextCoord("left", radar.upPos);
+    radar.upPos.lookRight = findNextCoord("right", radar.upPos);
+    radar.upPos.lookDown = findNextCoord("down", radar.upPos);
+    radar.upPos.lookUp = findNextCoord("up", radar.upPos);
 
+    for(let i = 0; i < 4; i++){
+        
+        if(radar.leftPos.lookLeft == gameData.you.body[i])
+    }
+
+    // look at all four (?better with just three?) directions around target position -- 
+
+
+}
+*/
 function findCloseFood(gameData){
     const food = gameData.board.food;
     // loop over each food object in the food array, and add a property for distance to my head
@@ -356,6 +425,10 @@ function chooseMove(directions, gameData){
     if(arraySafeMoves.length != 0){
         let randomChoice = returnRandomArrayIndex(arraySafeMoves);
         console.log(`randomChoice: ${randomChoice}`);
+        let moveDirection = arraySafeMoves[randomChoice];
+        if((directions[moveDirection].enemyHeadNear) && (directions[moveDirection].enemySize >= gameData.you.length)){
+            chooseMove(directions, gameData);    
+        }
         return arraySafeMoves[randomChoice];
     };
     if((arraySafeMoves.length == 0) && (arrayHazardMoves.length != 0)){

@@ -45,23 +45,28 @@ function handleMove(request, response) {
             safe: true,
             hazard: false,
             enemyHeadNear: false,
+            enemySize: 0,
         },
         right : {
             safe:true,
             hazard: false,
             enemyHeadNear: false,
+            enemySize: 0,
         },
         down : {
             safe:true,
             hazard: false,
             enemyHeadNear: false,
+            enemySize: 0,
         },
         up : {
             safe:true,
             hazard: false,
             enemyHeadNear: false,
+            enemySize: 0,
         },
-    }
+    };
+    me.corners = {};
 
     //console.log(me.directions);
 
