@@ -370,6 +370,12 @@ function findCloseFood(gameData){
     return closestFood;
 };
 
+// TODO: CURRENTLY MOVES TOWARD CLOSE FOOD EVEN IF ANOTHER ENEMY OF EQUAL OR LONGER LENGTH
+// MAY MOVE TOWARD CLOSE
+// FOOD -- IF THAT OTHER SNAKE IS LONGER OR SAME LENGTH AND ALSO GOES FOR FOOD, WE DIE.
+//
+// SOLUTION -- ONLY RETURN MOVE TOWARD FOOD IF CLEAR OR IF SNAKE < OUR LENGTH
+
 function moveTowardCloseFoodIfSafe(gameData, closestFood, directions){
     const myHead = gameData.you.head;
     if(!closestFood){
